@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>資料視覺化案例庫</title>
+<style>
+  :root {
+    --bg: #f8f7f4;
+    --surface: #ffffff;
+    --border: #e5e2db;
+    --text: #1a1814;
+    --text-sub: #6b6560;
+    --accent: #2d5a8e;
+    --tag-ft: #b84b00;
+    --tag-pudding: #7b3fb5;
+    --tag-k: #1a7a4a;
+    --tag-dw: #c4491c;
+    --tag-r: #0a6b8a;
+    --tag-bc: #1a5c2e;
+    --tag-nyt: #000000;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, 'Noto Sans TC', BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* Header */
+  header {
+    background: var(--text);
+    color: #f8f7f4;
+    padding: 2rem 1.5rem 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  header h1 { font-size: 1.1rem; font-weight: 700; letter-spacing: 0.04em; }
+  header p { font-size: 0.8rem; color: #aaa; margin-top: 0.25rem; }
+  .filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+  .filter-btn {
+    padding: 0.3rem 0.85rem;
+    border-radius: 999px;
+    border: 1.5px solid rgba(255,255,255,0.2);
+    background: transparent;
+    color: #ccc;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .filter-btn:hover { border-color: rgba(255,255,255,0.6); color: #fff; }
+  .filter-btn.active { background: #fff; color: #1a1814; border-color: #fff; }
+
+  /* Stats bar */
+  .stats {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.78rem;
+    color: var(--text-sub);
+    border-bottom: 1px solid var(--border);
+    background: var(--bg);
+  }
+
+  /* Grid */
+  .grid {
+    padding: 1rem 1rem 4rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  @media (min-width: 640px) {
+    .grid { grid-template-columns: 1fr 1fr; padding: 1.25rem 1.25rem 4rem; }
+  }
+  @media (min-width: 1024px) {
+    .grid { grid-template-columns: 1fr 1fr 1fr; padding: 1.5rem 1.5rem 4rem; max-width: 1280px; margin: 0 auto; }
+  }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.1rem 1.1rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    transition: box-shadow 0.15s, transform 0.15s;
+  }
+  .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateY(-1px); }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .media-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.2rem 0.55rem;
+    border-radius: 4px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .badge-ft { background: #fde8da; color: var(--tag-ft); }
+  .badge-pudding { background: #ede0f8; color: var(--tag-pudding); }
+  .badge-k { background: #d9f0e5; color: var(--tag-k); }
+  .badge-dw { background: #fde8da; color: var(--tag-dw); }
+  .badge-r { background: #d6edf5; color: var(--tag-r); }
+
+  .year {
+    font-size: 0.72rem;
+    color: var(--text-sub);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .card-title {
+    font-size: 0.88rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--text);
+  }
+  .card-title a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .card-title a:hover { color: var(--accent); }
+
+  .card-question {
+    font-size: 0.78rem;
+    color: var(--text-sub);
+    line-height: 1.5;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-top: 0.25rem;
+  }
+  .tag {
+    font-size: 0.68rem;
+    background: #f0ede8;
+    color: #6b6560;
+    padding: 0.15rem 0.5rem;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .card-expand-btn {
+    font-size: 0.72rem;
+    color: var(--accent);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    text-align: left;
+    margin-top: 0.1rem;
+  }
+  .card-expand-btn:hover { text-decoration: underline; }
+
+  .card-detail {
+    display: none;
+    font-size: 0.76rem;
+    color: var(--text-sub);
+    line-height: 1.55;
+    border-top: 1px solid var(--border);
+    padding-top: 0.65rem;
+    margin-top: 0.1rem;
+  }
+  .card-detail.open { display: block; }
+  .card-detail strong {
+    display: block;
+    color: var(--text);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-top: 0.5rem;
+    margin-bottom: 0.15rem;
+  }
+  .card-detail strong:first-child { margin-top: 0; }
+
+  .no-results {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 1rem;
+    color: var(--text-sub);
+    font-size: 0.9rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>資料視覺化案例庫</h1>
+  <p id="subtitle">5 家媒體・50 個專案・2014–2026</p>
+  <div class="filter-bar">
+    <button class="filter-btn active" data-filter="all">全部</button>
+    <button class="filter-btn" data-filter="Financial Times">Financial Times</button>
+    <button class="filter-btn" data-filter="The Pudding">The Pudding</button>
+    <button class="filter-btn" data-filter="Kontinentalist">Kontinentalist</button>
+    <button class="filter-btn" data-filter="Datawrapper">Datawrapper</button>
+    <button class="filter-btn" data-filter="報導者">報導者</button>
+  </div>
+</header>
+
+<div class="stats" id="stats">顯示 50 個專案，依年份由新到舊排列</div>
+
+<div class="grid" id="grid"></div>
+
+<script>
+const cases = [
+  {
+    media: "報導者", year: 2025, title: "全台圓環大體檢：哪些圓環頻傳傷亡事故？",
+    url: "https://www.twreporter.org/a/taiwan-roundabouts-reckoning-2",
+    question: "台灣傳統圓環設計有哪些結構性安全缺陷？螺旋圓環設計能否有效降低傷亡？",
+    methods: "全國圓環傷亡事故互動地圖、改建前後影片對比、動態圖表、空拍影像",
+    tools: "DBSCAN地理聚類演算法、ArcGIS、警政署交通事故開放資料、Python地理空間處理",
+    impact: "多個縣市交通局公開回應；展現開源機器學習演算法應用於新聞調查的創新實踐"
+  },
+  {
+    media: "報導者", year: 2025, title: "互動式地圖揭全台校園空汙鄰居──172座國中小緊鄰違規工廠",
+    url: "https://www.twreporter.org/a/data-reporter-172-schools-next-to-air-polluting-factories",
+    question: "有多少學童在不知情下與違規排放空汙的工廠為鄰就學？政府空污管制是否保護了最脆弱族群？",
+    methods: "全台學校與工廠分布互動地圖、GIS地理套疊、500公尺緩衝區視覺化",
+    tools: "QGIS、環保署空污裁罰公開資料、教育部學校座標資料庫、Python（Shapely/GeoPandas）",
+    impact: "引發家長、環保團體及議員廣泛關注，多個縣市被要求公開說明改善計畫"
+  },
+  {
+    media: "Kontinentalist", year: 2026, title: "Thirsty, Tired, Wired: Singapore, Johor, Batam and the Data Centre Boom",
+    url: "https://kontinentalist.com/stories/data-centres-in-johor-singapore-batam",
+    question: "新加坡、柔佛與峇淡三地的數據中心擴張，是否正以社區環境承載力為代價換取科技發展？",
+    methods: "數據比較圖表、等量換算視覺化、插圖敘事、地圖呈現數據中心地理分布",
+    tools: "客製化網頁程式；DC Byte數據中心市場情報平台",
+    impact: "作為11個新聞機構組成的「骯髒數據」跨國調查報導協作的一部分；記錄馬來西亞首次數據中心環境抗議"
+  },
+  {
+    media: "Kontinentalist", year: 2025, title: "The Physical Phenomenon: Why CDs are Still Well-Loved in K-pop",
+    url: "https://kontinentalist.com/stories/kpop-physical-album-sales-environmental-impact",
+    question: "K-pop實體專輯消費文化是否可持續？粉絲購買行為如何在偶像支持動機與氣候責任之間製造結構性矛盾？",
+    methods: "插圖說明K-pop專輯內容物；折線圖呈現實體銷量成長趨勢；碳排放換算量化視覺化",
+    tools: "資料視覺化設計；客製化插圖；客製化網頁排版與嵌入式圖表",
+    impact: "引發粉絲、環保倡議者與音樂產業媒體廣泛討論；K-pop4Planet代表曾出席韓國國會研討會及COP27"
+  },
+  {
+    media: "Financial Times", year: 2024, title: "Mariupol: Who Profits from Russia's Sham Reconstruction",
+    url: "https://ig.ft.com/mariupol/",
+    question: "俄羅斯在馬里烏波爾的「重建」宣傳與現實差距有多大？誰在重建合約網絡中中飽私囊？",
+    methods: "衛星影像前後對比、互動地圖建設進度標記、企業所有權網絡關係圖、Scrollytelling",
+    tools: "俄羅斯法人登記資料、Planet Labs衛星影像分析、OSINT、地理空間數據視覺化",
+    impact: "作為記錄俄佔區治理腐敗的重要調查文件，廣泛被引用於國際法律訴訟討論"
+  },
+  {
+    media: "Datawrapper", year: 2024, title: "雙重不平等：性別薪資差距與LGBTQIA+貧困的交叉性分析",
+    url: "https://www.datawrapper.de/blog/gender-income-gap-squared",
+    question: "性別薪資差距的討論若只停留在男女二元框架，會遮蔽哪些交叉性不平等？",
+    methods: "散點圖呈現家庭收入分佈、長條圖比較群體間差異、比較圖突顯交叉維度",
+    tools: "Datawrapper多圖表組合；美國人口普查局、Pew Research Center、Human Rights Campaign數據",
+    impact: "突破單維度性別薪資差距討論框架；被多個LGBTQIA+倡議組織、學術研究及新聞媒體引用"
+  },
+  {
+    media: "報導者", year: 2024, title: "反送中運動5週年：數據看香港的改變",
+    url: "https://www.twreporter.org/a/data-reporter-hong-kong-extradition-bill-protests-fifth-anniversary",
+    question: "政治管控如何透過人口流動、經濟競爭力與文化認同等數據被客觀量化？",
+    methods: "時間序列折線圖、跨國比較長條圖、多主題並行數據分析、互動式圖表切換",
+    tools: "香港政府統計處、世界銀行等多國數據庫整合、Datawrapper、Python",
+    impact: "五週年紀念前後廣泛流傳；被學術界引用為「一國兩制」實質崩解的數據佐證"
+  },
+  {
+    media: "報導者", year: 2024, title: "TPASS上路一週年，基北北桃通勤車流卻惡化？",
+    url: "https://www.twreporter.org/a/data-reporter-a-year-after-tpass-was-launched",
+    question: "TPASS真的有效減少私家車使用、改善交通壅塞嗎？政策成效與政府宣傳之間存在多大落差？",
+    methods: "路段車速互動地圖、尖峰時段車流量比較圖、時序趨勢折線圖、政策目標與實際數據對照",
+    tools: "TDX運輸資料流通服務平台、VD感測資料、ETC數據、Python、互動地圖工具",
+    impact: "廣獲媒體轉引，引發交通部公開回應；直接以數據挑戰政府政策宣傳的代表性案例"
+  },
+  {
+    media: "報導者", year: 2024, title: "第10屆立委發言儀表板",
+    url: "https://www.twreporter.org/a/data-reporter-10th-legislator-speech-dashboard",
+    question: "各黨派立委的質詢重心有何系統性差異？選民能否透過數據客觀評估立委表現？",
+    methods: "互動式立委發言儀表板、各立委五大關注議題視覺化圖卡、政黨議題分布比較圖",
+    tools: "LDA主題模型、Python文字探勘、立法院公開質詢紀錄資料庫（380萬字語料）",
+    impact: "2024年選前成為選民重要參考工具；展現資料新聞在民主監督上的實際功能"
+  },
+  {
+    media: "Kontinentalist", year: 2024, title: "Gaza Lives: Resisting Cultural Genocide",
+    url: "https://gazalives.kontinentalist.com/",
+    question: "在武裝衝突的物質毀滅之外，加薩的文化記憶、藝術傳承與巴勒斯坦集體身份認同，如何遭受蓄意的系統性消除？",
+    methods: "三章節分段式互動Scrollytelling；手繪插圖結合人物攝影；沉浸式個人生命故事敘述",
+    tools: "客製化網頁程式；Visualizing Palestine研究數據庫；插圖（Griselda Gabriele）",
+    impact: "入選2025年Sigma Awards短名單；榮獲2024年Information is Beautiful Awards銅獎；獲New Media Writing Prize「開放獎」"
+  },
+  {
+    media: "Datawrapper", year: 2023, title: "諾貝爾獎理論揭示：為什麼性別薪資差距依然存在？",
+    url: "https://www.datawrapper.de/blog/gender-pay-gap-weekly-chart",
+    question: "性別薪資差距的根本原因是職場歧視，還是工作設計結構鼓勵了不平等的家庭分工？「生育懲罰」在數據上如何呈現？",
+    methods: "四張折線圖搭配兩張長條圖；呈現學歷趨勢逆轉、薪資差距隨年齡擴大的走勢",
+    tools: "Datawrapper折線圖與長條圖組合；Pew Research Center、Our World in Data數據",
+    impact: "配合諾貝爾獎頒獎被《紐約時報》、《經濟學人》、Forbes廣泛引用"
+  },
+  {
+    media: "Financial Times", year: 2023, title: "How China is Tearing Down Islam",
+    url: "https://ig.ft.com/china-mosques/",
+    question: "「宗教中國化」政策在多大的物質規模上改變了中國伊斯蘭建築遺產？衛星影像能否提供系統性量化佐證？",
+    methods: "衛星影像前後對比（before/after）、互動地圖熱力圖、清真寺改建程度分類標記、縮時影像",
+    tools: "Google Earth、Planet Labs衛星影像、機器學習影像辨識、GIS、Mapbox",
+    impact: "榮獲2024年Sigma數據新聞獎；Human Rights Watch列為重要文件佐證；為聯合國人權機制提供量化數據"
+  },
+  {
+    media: "Financial Times", year: 2023, title: "Inside North Korea's Oil Smuggling",
+    url: "https://ig.ft.com/north-korea-oil-smuggling/",
+    question: "北韓如何透過複雜的跨國犯罪網絡持續規避國際制裁、輸入戰略物資，進而維繫並擴充其核武計畫？",
+    methods: "OSINT視覺化、互動船隻追蹤路線地圖、跨國金融網絡關係圖、Scrollytelling與多媒體整合",
+    tools: "AIS船舶自動識別系統追蹤數據、衛星影像分析、公司記錄資料庫交叉比對、開源情報工具",
+    impact: "榮獲2023年Press Gazette媒體未來獎「最佳數位敘事獎」；RUSI評為「公開資料中最詳盡的北韓制裁違規證據」"
+  },
+  {
+    media: "Financial Times", year: 2023, title: "Seventeen Hours of Terror: How Hamas Invaded One Israeli Community",
+    url: "https://www.ft.com/content/b2a24f91-6e8f-4b41-9e72-ef8b2ae72fd6",
+    question: "哈馬斯武裝人員如何突破以色列防線、長時間佔領一個基布茲社區？攻擊的時間軸如何從現有影像和目擊證詞中客觀重建？",
+    methods: "精確時間軸視覺化、地理定位衛星地圖、監控影像截圖分析、目擊者敘事與地圖標記整合",
+    tools: "影像地理定位（geolocation）技術、衛星影像比對（Maxar）、OSINT、影片真偽驗證技術",
+    impact: "被重製為Instagram Reel，成為FT有史以來社群媒體表現最佳的影音內容之一"
+  },
+  {
+    media: "Financial Times", year: 2023, title: "Ukraine's Counteroffensive Against Russia: In Maps",
+    url: "https://ig.ft.com/ukraine-counteroffensive/",
+    question: "俄羅斯在被佔烏克蘭領土上構築了多大規模的防禦工事？這些工事的地理分布如何從衛星影像中得到量化呈現？",
+    methods: "高解析度衛星影像標注分析、防禦工事類型分類地圖、反攻進度動態更新、Scrollytelling與軍事分析整合",
+    tools: "Maxar及Planet Labs衛星影像、GIS地理空間分析、Mapbox地圖平台、軍事專家諮詢",
+    impact: "廣泛被軍事分析機構和學術研究引用；協助FT奪得2022–2023連續兩年Press Gazette視覺報導獎項"
+  },
+  {
+    media: "Financial Times", year: 2023, title: "Why Did So Many Buildings Collapse in Turkey's Earthquake?",
+    url: "https://ig.ft.com/turkey-earthquake-apartment-collapse/",
+    question: "土耳其地震中為何有如此多現代公寓建築倒塌？建築法規失靈和政治性「地震特赦」如何共同製造了可預見的人為災難？",
+    methods: "Scrollytelling動畫、建築結構剖面示意圖、衛星影像廢墟範圍標示、受損建築密度地圖",
+    tools: "Planet Labs衛星影像分析、3D建築結構剖面圖形、OSINT開源情報工具、地理空間數據分析",
+    impact: "在震後數日內完成發布；廣泛引發關於土耳其建築監管失敗的國際討論"
+  },
+  {
+    media: "報導者", year: 2023, title: "【動態圖解】解放軍如何進逼第一島鏈",
+    url: "https://www.twreporter.org/a/taiwanyuji-first-island-chain-military-movement-multimedia",
+    question: "解放軍擾台行動呈現哪些系統性趨勢？對第一島鏈集體防禦架構帶來哪些影響？",
+    methods: "捲動式動態地圖、軍機航跡動畫、時序視覺化、多層地理圖資套疊",
+    tools: "Python批次影像辨識、QGIS、Adobe After Effects、GEOlayers3、Mapbox",
+    impact: "台灣媒體首度系統性整合台日軍方數據；引發國際媒體廣泛引用；方法論在開放實驗室公開分享"
+  },
+  {
+    media: "報導者", year: 2023, title: "賴侯柯郭陣營Meta、Google選舉廣告分析",
+    url: "https://www.twreporter.org/a/data-reporter-2024-election-advertising-meta-google",
+    question: "各候選人陣營在社群平台的廣告投放策略有何差異？廣告內容反映哪些選戰框架？",
+    methods: "互動式資訊圖表、廣告主題比較視覺化、廣告金額橫條圖、廣告文案分析圖卡",
+    tools: "Meta廣告資料庫、Google廣告透明度中心、Python資料清洗",
+    impact: "台灣媒體選舉廣告透明度報導先驅；成為學界討論選舉廣告監管的重要參考"
+  },
+  {
+    media: "Kontinentalist", year: 2023, title: "Exploiting the Legal System: Alleged Corruption in Cambodia's Monkey Farms",
+    url: "https://kontinentalist.com/stories/illegal-wildlife-trade-of-endangered-cambodian-crab-eating-macaque-macaca-fascicularis",
+    question: "柬埔寨猴場的合法出口量是否大幅超越其繁殖能力？合法貿易機制是否已成為瀕危物種非法捕捉的系統性漏洞？",
+    methods: "量化比較圖表呈現養殖容量對比出口數量差異；調查性資料視覺化；插圖敘事",
+    tools: "自行數據分析；客製化插圖；Pulitzer Center研究數據庫",
+    impact: "獲Pulitzer Center資助；與《東南亞環球》聯合製作；促進野生動物保護議題的跨國媒體關注"
+  },
+  {
+    media: "Kontinentalist", year: 2023, title: "Rubber, Race and Colonial Exploitation",
+    url: "https://kontinentalist.com/stories/rubber-race-and-colonial-exploitation",
+    question: "殖民時期馬來亞橡膠產業建立的種族化勞動政策，如何在獨立後延續為現代社會不平等的結構性根源？",
+    methods: "歷史數據視覺化；時間軸呈現橡膠產業演變；種族勞動人口與薪資比較圖；手繪插圖",
+    tools: "客製化網頁程式；殖民時期歷史檔案數據分析；自製資料設計",
+    impact: "入選2024年Sigma Awards短名單；成為東南亞殖民史數位敘事的重要參考範例"
+  },
+  {
+    media: "The Pudding", year: 2022, title: "Who's in Your Wallet?",
+    url: "https://pudding.cool/2022/04/banknotes/",
+    question: "一個國家選擇將誰的臉印在鈔票上，能揭示哪些關於歷史記憶、性別偏見與國家認同的深層文化選擇？",
+    methods: "互動式圓形與矩形比例圖表、時間軸分析視覺化、可依國家與性別篩選的鈔票人物資料庫",
+    tools: "自定義資料收集與清理工具、D3.js互動圖表、響應式網頁設計",
+    impact: "發布時恰逢哈莉特·塔布曼20美元鈔票設計輿論高峰；被公共政策與歷史教育機構廣泛引用"
+  },
+  {
+    media: "Kontinentalist", year: 2022, title: "Money Flows: Who's Investing in Laos?",
+    url: "https://kontinentalist.com/stories/foreign-investment-and-hydropower-development-in-laos-pose-problems",
+    question: "外國直接投資是否真正有助於寮國長期發展，還是加深了對特定強權的債務依賴？",
+    methods: "互動地圖呈現各投資項目地理位置；長條圖與折線圖展示多年度外資趨勢；能源與交通分部門比較圖",
+    tools: "Reconnecting Asia地圖資料庫；AidData中國發展項目數據庫；Stimson Center Mekong Infrastructure Tracker",
+    impact: "整合五個以上國際研究機構數據，樹立東南亞外資報導的資料深度標竿"
+  },
+  {
+    media: "Financial Times", year: 2022, title: "The Climate Game: Can You Reach Net Zero by 2050?",
+    url: "https://ig.ft.com/climate-game/",
+    question: "在現實的政治、經濟與社會限制下，一個全球決策者需要做出哪些困難取捨，才能讓地球在2050年前實現淨零排放？",
+    methods: "互動政策模擬遊戲、點數制資源分配系統、政策選擇後的即時氣候模型輸出、四階段情境推進",
+    tools: "JavaScript單頁網路應用（SPA）、IEA客製化氣候排放預測模型",
+    impact: "超過800萬次曝光、逾65萬次完整遊玩記錄；全球逾100個新聞機構申請翻譯授權"
+  },
+  {
+    media: "Financial Times", year: 2022, title: "Russia's War in Ukraine: Tracking the Invasion",
+    url: "https://ig.ft.com/russias-war-in-ukraine/",
+    question: "俄烏戰場上的實際控制線如何一日一日地演變？衝突的地理範圍和人道代價能否以視覺化提供比文字報導更清晰直觀的呈現？",
+    methods: "動態更新衝突地圖、手風琴滾動敘事（accordion scrollytelling）、衛星影像前後對比、時間軸動畫",
+    tools: "Mapbox地圖平台、自定義GIS工具、Planet Labs及Maxar衛星影像、多人協作版本控制",
+    impact: "榮獲2022年Press Gazette媒體未來獎「數位媒體卓越獎」；成為英語主流媒體烏克蘭戰事報導的標竿視覺化"
+  },
+  {
+    media: "Kontinentalist", year: 2021, title: "Sexual Violence in Singapore: A Crisis",
+    url: "https://kontinentalist.com/stories/sexual-assault-and-abuse-in-singapore-need-more-than-the-law",
+    question: "在被外界視為安全的新加坡，性暴力問題為何如此普遍卻長期被低估？現行法律是否真正足夠保護受害者？",
+    methods: "Scrollytelling；點狀圖（每個點代表一位受害者）；氣泡圖呈現多被害人案件規模；圓餅圖與比例圖",
+    tools: "Flourish（Hierarchy模板與Survey模板）；客製化網頁程式",
+    impact: "與Women Unbounded合作引發新加坡女性社群廣泛討論；推動性暴力議題的公共政策對話；Flourish官方特別收錄為優秀案例"
+  },
+  {
+    media: "The Pudding", year: 2021, title: "How Bad Is Your Streaming Music?",
+    url: "https://pudding.cool/2021/10/judge-my-music/",
+    question: "我們對自身音樂品味的自我認知，在旁觀者眼中是什麼樣子？諷刺性互動體驗能否成為吸引公眾反思文化消費習慣的媒介？",
+    methods: "個人化互動式「AI評審」對話介面、串流媒體帳號OAuth連結的即時分析體驗、一鍵生成可分享截圖的病毒傳播設計",
+    tools: "Spotify Web API、Apple Music API、OAuth 2.0、自定義評論生成資料庫、無伺服器後端架構",
+    impact: "2021年首發後迅速病毒式傳播；2023年更新版再度引爆討論；The Pudding近年社群互動率最高的作品之一"
+  },
+  {
+    media: "Datawrapper", year: 2021, title: "史上最熱年份的極簡氣候圖：用暖化條紋直觀傳遞百年升溫",
+    url: "https://www.datawrapper.de/blog/warming-stripes",
+    question: "如何用最少的視覺元素讓公眾立即感受全球升溫的歷史規模？去除所有傳統圖表元素，傳播效果是否反而更強？",
+    methods: "熱力圖模擬暖化條紋：每列一年，色彩映射氣溫距平；刻意移除所有傳統圖表元素（無軸線、無標籤）",
+    tools: "Datawrapper熱力圖；Berkeley Earth、NOAA、德國氣象局（DWD）、英國氣象局（Met Office）",
+    impact: "暖化條紋已成為全球氣候傳播的標誌性符號，出現在雜誌封面、氣候抗議旗幟上；Datawrapper教學讓各地記者能製作本地化版本"
+  },
+  {
+    media: "報導者", year: 2020, title: "從武漢到世界──COVID-19疫情即時脈動",
+    url: "https://www.twreporter.org/i/covid-2019-keep-tracking-gcs",
+    question: "如何透過持續更新的數據視覺化儀表板，在疫情初期協助讀者即時掌握全球脈絡？",
+    methods: "即時更新互動儀表板、地理熱力圖、全球動態地圖、時序折線圖、多主題捲軸式導覽",
+    tools: "Johns Hopkins CSSE資料串接、疾管署開放資料API、D3.js、Scrollytelling框架",
+    impact: "台灣疫情初期最受重視的數據追蹤平台之一；確立《報導者》數位新聞公共服務標竿地位"
+  },
+  {
+    media: "Datawrapper", year: 2020, title: "#FlattenTheCurve：新冠病毒成長曲線的對數尺度視覺化",
+    url: "https://www.datawrapper.de/blog/weekly-chart-coronavirus-growth",
+    question: "真正關鍵的不是確診人數絕對值，而是病毒的成長速率——哪些國家成功減緩了擴散？",
+    methods: "對數刻度多國折線圖，搭配代表不同倍增速率的斜率參考線；色彩區分各國走勢",
+    tools: "Datawrapper折線圖（對數刻度設定）；Johns Hopkins大學數據",
+    impact: "「壓平曲線」（#FlattenTheCurve）成為全球2020年疫情應對的核心溝通概念；Datawrapper協助數十家新聞室發布疫情視覺化"
+  },
+  {
+    media: "Datawrapper", year: 2020, title: "新冠病毒的真實死亡代價：以超額死亡衡量疫情衝擊",
+    url: "https://www.datawrapper.de/blog/weekly-chart-covid19-excess-mortality",
+    question: "官方公布的新冠死亡人數是否真實反映疫情的全面衝擊？超額死亡方法如何填補確診統計的系統性盲點？",
+    methods: "週度折線圖，以多年歷史平均死亡人數為基準線；疫情期間超出部分以填充色彩強調峰值；多地區圖表並排展示",
+    tools: "Datawrapper折線圖與面積填充功能；Human Mortality Database；Short-term Mortality Fluctuations數據集",
+    impact: "《紐約時報》、《經濟學人》、《金融時報》隨後均採用超額死亡視角；推廣此方法論在新聞界應用的重要早期示範"
+  },
+  {
+    media: "Datawrapper", year: 2020, title: "美國政治版圖的極化：1976–2016年總統大選熱力圖",
+    url: "https://www.datawrapper.de/blog/weekly-chart-presidential-elections",
+    question: "美國的政治極化何時開始加劇？哪些州是真正的「搖擺州」？傳統地理地圖為何難以呈現這四十年的演變？",
+    methods: "客製化小多圖熱力圖，各州格單元依東西地理順序排列；色彩映射政黨傾向（紅藍）及勝選幅度",
+    tools: "Datawrapper熱力圖；R語言與Observable筆記本；美國歷屆總統大選結果資料庫",
+    impact: "展示傳統選舉地圖難以呈現的跨時間政治演變；資料新聞界廣泛分享與討論"
+  },
+  {
+    media: "Datawrapper", year: 2020, title: "將每日氣溫範圍放入歷史脈絡：如何製作氣象脈絡圖",
+    url: "https://www.datawrapper.de/blog/weekly-temperature-chart",
+    question: "今天的氣溫在歷史上算異常嗎？如何設計一張靜態圖同時呈現「今日天氣」與「歷史背景」？",
+    methods: "每日高低溫以垂直線段呈現，疊加兩層填充面積背景帶；利用Datawrapper「兩線之間填充」功能創造多層次視覺脈絡",
+    tools: "Datawrapper折線圖與面積填充功能；R語言；完整程式碼發布於GitHub",
+    impact: "啟發眾多記者複製此格式應用於本地氣象報導；Datawrapper社群最廣泛引用的氣候與氣象教學案例之一"
+  },
+  {
+    media: "Datawrapper", year: 2020, title: "散點圖幫我理解德國氣候變化：溫度與降雨的四象限分析",
+    url: "https://www.datawrapper.de/blog/weekly-chart-thermopluvio",
+    question: "氣候變化在德國的體現是否只有「變熱」一種維度？溫度與降雨量的複合變化如何以四象限框架同步呈現？",
+    methods: "四象限散點圖（thermo-pluvio圖），x軸為氣溫距平、y軸為降雨距平；象限分割線提供直覺參照框架",
+    tools: "Datawrapper散點圖；德國氣象局（DWD）年度氣候現狀報告",
+    impact: "被資料視覺化社群引用為「在單張圖表中同時呈現兩種氣候指標複合變化」的創新範例"
+  },
+  {
+    media: "The Pudding", year: 2020, title: "The Physical Traits that Define Men and Women in Literature",
+    url: "https://pudding.cool/2020/07/gendered-descriptions/",
+    question: "文學作品對男女身體的描述存在多深的刻板印象？這些語言模式是否在不同時代、作者性別與書籍類型中系統性出現？",
+    methods: "Scrollytelling視覺化、互動式詞頻熱圖、男女身體詞彙比較氣泡圖、讀者可輸入關鍵詞查詢的互動功能",
+    tools: "spaCy NLP框架、自定義身體詞彙辨識與人物性別標記演算法、D3.js",
+    impact: "在文學研究與女性主義社群廣泛傳播；引發業界對媒體選題性別偏見的自我審視"
+  },
+  {
+    media: "Kontinentalist", year: 2020, title: "A River Drained: Fish, Rice, and Food Security in the Mekong",
+    url: "https://kontinentalist.com/stories/food-security-mekong-river-hydropower-dam-climate-change",
+    question: "水力發電大規模開發與氣候變遷，將如何危害當地社區的糧食主權？各國政府如何在能源需求與生態保育之間取捨？",
+    methods: "互動地圖搭配Scrollytelling；折線圖展示漁獲量長期趨勢；靜態插圖輔助說明生態系統",
+    tools: "客製化網頁程式；Open Development Mekong開放數據平台",
+    impact: "入選2021年Sigma Awards（全球資料新聞獎）；與Open Development Mekong合作提升湄公河議題國際能見度"
+  },
+  {
+    media: "Kontinentalist", year: 2020, title: "Abandoned at Sea: The Desperate Journeys of Rohingya Refugees",
+    url: "https://kontinentalist.com/stories/the-rohingya-in-myanmar-a-refugee-crisis-at-sea",
+    question: "在東南亞各國政府推諉責任的處境下，羅興亞難民如何冒著生命危險橫越海洋求生？國際社會應承擔什麼保護義務？",
+    methods: "互動地圖標示難民航程危機熱點；客製化音頻敘事；手繪插圖結合統計數據；Scrollytelling閱讀體驗",
+    tools: "客製化網頁程式；UNHCR官方行政數據；自行開發音頻播放元件",
+    impact: "榮獲2022年Information is Beautiful Awards金獎（人道主義類別）；入選2021年Sigma Awards；UNHCR官方合作背書"
+  },
+  {
+    media: "Datawrapper", year: 2019, title: "不同程度的全球暖化意味著什麼？升溫1.5°C到5°C的視覺化分析",
+    url: "https://www.datawrapper.de/blog/climate-crisis-global-warming",
+    question: "升溫1.5°C與3°C的差距對人類社會意味著什麼？如何將抽象溫度數字轉化為公眾能感受到的具體生活影響？",
+    methods: "帶色彩背景帶的折線圖，搭配大量文字標注；漸層色彩帶（藍→橙→紅）直覺傳達升溫嚴重程度",
+    tools: "Datawrapper折線圖（含延伸標注功能）；NOAA全球氣溫歷史數據；Raftery et al.（2017）升溫概率預測模型",
+    impact: "配合2019年聯合國氣候峰會發布；被多個歐洲媒體機構作為氣候議題說明圖的參考範本"
+  },
+  {
+    media: "報導者", year: 2019, title: "風向戰爭與它的推手：揭開台星馬中「資訊戰商人」的神祕面紗",
+    url: "https://www.twreporter.org/topics/information-warfare-business",
+    question: "跨境資訊戰商人如何打造假訊息產業鏈？台灣政治行銷公司扮演了什麼角色？",
+    methods: "深度調查文字報導、社群帳號網絡關係視覺化、資料分析圖表、跨國協作多媒體",
+    tools: "R語言、Python數位足跡追蹤、社群廣告資料庫分析、OSINT工具",
+    impact: "2020年SOPA解釋性報導卓越獎一等獎；推動台灣打擊假訊息立法辯論"
+  },
+  {
+    media: "Datawrapper", year: 2018, title: "不同地理單位，截然不同的故事：歐洲人口增長率的五種地圖讀法",
+    url: "https://www.datawrapper.de/blog/weekly-chart-europegrowth",
+    question: "在製作新聞地圖時選擇哪個行政層級，實質上等同於選擇講述哪個版本的故事——製圖者應當意識到地理聚合選擇所蘊含的什麼政治與敘事意涵？",
+    methods: "五張並排等值填充地圖，分別採用市鎮、NUTS-3、NUTS-2、NUTS-1及國家等五個地理聚合層次",
+    tools: "Datawrapper等值填充地圖；原始精細數據來源為柏林晨報互動地圖專案",
+    impact: "成為資料新聞培訓課程與工作坊中廣泛引用的核心教材；深刻影響了資料新聞界對地圖設計方法論的反思"
+  },
+  {
+    media: "Financial Times", year: 2018, title: "The Uber Game",
+    url: "https://ig.ft.com/uber-game/",
+    question: "在零工平台的規則限制下，一個全職優步司機究竟能否維持基本生計？這種工作模式讓工作者獲益還是使其陷入財務困境？",
+    methods: "互動敘事遊戲（新聞遊戲）、選擇分支劇情架構、統計數據驅動的財務結果計算、等角插畫風格介面",
+    tools: "Ink敘事腳本語言、inkjs執行庫、anime.js動畫引擎、Affinity Designer、FT Starter Kit、Node.js/TypeScript、PostgreSQL",
+    impact: "超過122,000次遊玩記錄，完成率高達70%；榮獲2018年Online Journalism Awards「大型媒體視覺數位敘事卓越獎」"
+  },
+  {
+    media: "The Pudding", year: 2018, title: "Women's Pockets are Inferior.",
+    url: "https://pudding.cool/2018/08/pockets/",
+    question: "女性牛仔褲口袋真的比男性小嗎？差距有多大？這種設計反映了哪些長期被視為理所當然的性別偏見？",
+    methods: "互動式口袋輪廓比較視覺化、物件與口袋大小比例圖、Scrollytelling引導讀者解讀實測數據",
+    tools: "D3plus函式庫（largestRect()函數）、自定義滾動動畫效果、響應式網頁設計",
+    impact: "The Pudding社群媒體討論度最高的作品之一；被《衛報》、美聯社廣泛報導；在TikTok上持續流傳，引發「口袋平等」議題討論"
+  },
+  {
+    media: "The Pudding", year: 2018, title: "The Cultural Borders of Songs",
+    url: "https://pudding.cool/2018/06/music-map/",
+    question: "流行音樂是否真的具有跨越文化的普世吸引力？不同歌曲的流行版圖是否與政治疆界、語言圈相互對應？",
+    methods: "互動式全球地圖、可回溯時間軸的動畫播放、點選特定歌曲查看全球分佈、地圖縮放探索",
+    tools: "YouTube Data API、D3.js地理投影與地圖視覺化、自定義互動地圖框架",
+    impact: "在音樂與資料視覺化社群廣泛流傳；持續更新至2021年，被多個媒體與教育機構引用"
+  },
+  {
+    media: "The Pudding", year: 2018, title: "Population Mountains",
+    url: "https://pudding.cool/2018/12/3d-cities-story/",
+    question: "傳統平面地圖與統計數字真的能讓我們理解全球人口分佈的極端不均嗎？3D視覺化能否讓龐大數字變得可感知？",
+    methods: "3D地形立體視覺化、Scrollytelling逐步引導比較不同城市山峰高度、互動式城市切換",
+    tools: "Google Earth Engine、全球人類定居層（Global Human Settlement Layer）資料集、三維地形渲染",
+    impact: "被FlowingData、Visual Capitalist廣泛分享；成為顛覆西方中心地理偏見的代表性作品"
+  },
+  {
+    media: "Kontinentalist", year: 2018, title: "Understanding the Belt and Road（理解一帶一路）",
+    url: "https://bri.kontinentalist.com/",
+    question: "中國透過「一帶一路」意圖達成什麼地緣政治與經濟目標？這一龐大基礎建設網絡將如何重塑亞洲乃至全球的權力版圖？",
+    methods: "Scrollytelling搭配互動地圖、點選各走廊深入了解；動態圖表呈現中國城市GDP與人口數據；分段式故事架構",
+    tools: "客製化JavaScript/HTML網頁應用程式；自行開發互動地圖視覺化",
+    impact: "入選2019年Kantar Information is Beautiful Awards長名單（政治與全球類別）；Kontinentalist奠定品牌聲譽的標誌性首作"
+  },
+  {
+    media: "The Pudding", year: 2017, title: "Film Dialogue from 2,000 Screenplays, Broken Down by Gender and Age",
+    url: "https://pudding.cool/2017/03/film-dialogue/",
+    question: "好萊塢電影中男女角色對話不平衡有多嚴重？數據分析能否將主觀感受轉化為客觀實證？",
+    methods: "互動式橫條圖與散點圖、依類型與年代篩選的動態圖表、Scrollytelling逐步引導讀者解讀",
+    tools: "D3.js、IMDB資料庫、Google Sheets開放數據集、自定義劇本解析演算法",
+    impact: "獲2017年皮博迪獎（互動數位新聞類）；被《衛報》、《紐約時報》廣泛引用；成為影視產業多元包容政策的重要實證依據"
+  },
+  {
+    media: "The Pudding", year: 2017, title: "An Interactive Visualization of Every Line in Hamilton",
+    url: "https://pudding.cool/2017/03/hamilton/",
+    question: "《漢密爾頓》各角色的台詞結構與人際關係網絡如何以語言形式構成？視覺化能否揭示純文本閱讀難以察覺的敘事結構？",
+    methods: "互動式弦形圖（chord diagram）呈現角色對話關係、色彩編碼台詞追蹤、可按角色篩選的歌詞瀏覽介面",
+    tools: "D3.js（弦形圖與色彩編碼）、自定義SVG動畫",
+    impact: "與電影對話分析同獲2017年皮博迪獎；正值《漢密爾頓》文化熱潮發布，引發廣泛社群傳播"
+  },
+  {
+    media: "The Pudding", year: 2017, title: "She Giggles, He Gallops",
+    url: "https://pudding.cool/2017/08/screen-direction/",
+    question: "好萊塢對男女角色的刻板呈現，是否不僅體現在對話量差距，更深嵌於劇本語言選擇之中？",
+    methods: "互動式詞彙排名圖與詞彙雲、男女編劇作品並列比較視覺化、Scrollytelling從量化帶向質性分析",
+    tools: "文字探勘技術、對數勝算比（log odds ratio）統計分析、D3.js、自定義劇本bigram萃取演算法",
+    impact: "與電影對話分析共同獲2017年皮博迪獎；被視為影視性別平等討論中最具說服力的數據佐證之一"
+  },
+  {
+    media: "報導者", year: 2017, title: "造假．剝削．血淚漁場──跨國直擊台灣遠洋漁業真相",
+    url: "https://www.twreporter.org/topics/far-sea-fishing-investigative-report",
+    question: "台灣遠洋漁業如何透過跨國仲介網絡對外籍漁工進行系統性剝削？政府監管機制為何長期失靈？",
+    methods: "資訊圖表、多媒體影像深度敘事、圖解（infographic）、紀錄片式影片、深度長篇文字調查",
+    tools: "跨國資料庫查核、資訊圖表設計軟體、多媒體製作工具",
+    impact: "2017年SOPA人權報導獎一等獎、調查報導獎、資訊圖表獎；台灣卓越新聞獎；推動政府修訂漁業法規"
+  },
+  {
+    media: "Financial Times", year: 2020, title: "Coronavirus Tracked: The Spread of COVID-19",
+    url: "https://www.ft.com/content/a26fbf7e-48f8-11ea-aeb3-955839e06441",
+    question: "不同國家的新冠病毒擴散速度有何差異？各國的防疫政策效果能否透過跨國數據比較加以客觀驗證？",
+    methods: "每日自動更新的互動折線圖、對數座標軸跨國軌跡重疊比較、七日移動平均平滑化處理、可篩選國家的動態介面",
+    tools: "R語言（ggplot2）用於原型製作、D3.js用於正式互動圖表、自動化資料擷取與清洗管道",
+    impact: "成為FT有史以來瀏覽量最高的單一頁面；每日收到逾千封讀者反饋；伯恩-默多克獲英國皇家統計學會榮譽會員殊榮"
+  },
+  {
+    media: "The Pudding", year: 2014, title: "Rappers, Sorted by the Size of Their Vocabulary",
+    url: "https://pudding.cool/projects/vocabulary/index.html",
+    question: "哪位嘻哈歌手詞彙量最豐富？不同世代的饒舌歌手在語言多樣性上有何差異？",
+    methods: "互動式散點圖排名視覺化、時間軸分代比較、懸停互動顯示各藝人數據與代表性歌詞",
+    tools: "Genius歌詞資料庫API、詞符分析演算法、D3.js、Google Sheets開放數據集",
+    impact: "原版在Reddit引發大規模討論，被《紐約時報》報導；成為嘻哈學術研究常引用的數據來源"
+  }
+];
+
+// Sort by year descending
+cases.sort((a, b) => b.year - a.year);
+
+const badgeClass = {
+  'Financial Times': 'badge-ft',
+  'The Pudding': 'badge-pudding',
+  'Kontinentalist': 'badge-k',
+  'Datawrapper': 'badge-dw',
+  '報導者': 'badge-r'
+};
+
+function renderCards(filter) {
+  const grid = document.getElementById('grid');
+  const stats = document.getElementById('stats');
+  const filtered = filter === 'all' ? cases : cases.filter(c => c.media === filter);
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '<div class="no-results">沒有符合的專案</div>';
+    stats.textContent = '顯示 0 個專案';
+    return;
+  }
+
+  stats.textContent = `顯示 ${filtered.length} 個專案，依年份由新到舊排列`;
+
+  grid.innerHTML = filtered.map((c, i) => `
+    <div class="card">
+      <div class="card-top">
+        <span class="media-badge ${badgeClass[c.media]}">${c.media}</span>
+        <span class="year">${c.year}</span>
+      </div>
+      <div class="card-title">
+        <a href="${c.url}" target="_blank" rel="noopener">${c.title}</a>
+      </div>
+      <div class="card-question">${c.question}</div>
+      <div class="card-tags">
+        ${c.methods.split('、')[0] ? `<span class="tag">${c.methods.split('、')[0]}</span>` : ''}
+        ${c.tools.split('、')[0] ? `<span class="tag">${c.tools.split('、')[0]}</span>` : ''}
+      </div>
+      <button class="card-expand-btn" onclick="toggleDetail(this)">展開詳情 ↓</button>
+      <div class="card-detail">
+        <strong>呈現手法</strong>${c.methods}
+        <strong>數位工具</strong>${c.tools}
+        <strong>溝通成效</strong>${c.impact}
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleDetail(btn) {
+  const detail = btn.nextElementSibling;
+  const isOpen = detail.classList.toggle('open');
+  btn.textContent = isOpen ? '收起 ↑' : '展開詳情 ↓';
+}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderCards(btn.dataset.filter);
+  });
+});
+
+renderCards('all');
+</script>
+</body>
+</html>
