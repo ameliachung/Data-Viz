@@ -6,19 +6,12 @@
 <title>資料視覺化案例庫｜地理監測・OSINT・數位敘事</title>
 <style>
   :root {
-    --bg: #f8f7f4;
+    --bg: #f5f4f0;
     --surface: #ffffff;
-    --border: #e5e2db;
+    --border: #e8e5de;
     --text: #1a1814;
-    --text-sub: #6b6560;
+    --text-sub: #78726a;
     --accent: #2d5a8e;
-    --tag-ft: #b84b00;
-    --tag-pudding: #7b3fb5;
-    --tag-k: #1a7a4a;
-    --tag-dw: #c4491c;
-    --tag-r: #0a6b8a;
-    --tag-bc: #1a5c2e;
-    --tag-nyt: #000000;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -27,173 +20,224 @@
     color: var(--text);
     font-size: 15px;
     line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
   }
 
-  /* Header */
+  /* ── Header ── */
   header {
-    background: var(--text);
-    color: #f8f7f4;
-    padding: 2rem 1.5rem 1.5rem;
+    background: #111;
+    color: #f5f4f0;
+    padding: 1.25rem 1.25rem 0;
     position: sticky;
     top: 0;
     z-index: 100;
   }
-  header h1 { font-size: 1.1rem; font-weight: 700; letter-spacing: 0.04em; }
-  header p { font-size: 0.8rem; color: #aaa; margin-top: 0.25rem; }
+  .header-top { display: flex; align-items: baseline; gap: 0.75rem; flex-wrap: wrap; }
+  header h1 { font-size: 1rem; font-weight: 700; letter-spacing: 0.05em; }
+  header p { font-size: 0.72rem; color: #888; }
+
+  /* Filter bar — horizontal scroll on mobile, no wrapping */
   .filter-bar {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-top: 1rem;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 0.4rem;
+    margin-top: 0.9rem;
+    padding-bottom: 0.9rem;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
   }
+  .filter-bar::-webkit-scrollbar { display: none; }
   .filter-btn {
-    padding: 0.3rem 0.85rem;
+    flex-shrink: 0;
+    padding: 0.28rem 0.8rem;
     border-radius: 999px;
-    border: 1.5px solid rgba(255,255,255,0.2);
+    border: 1.5px solid rgba(255,255,255,0.18);
     background: transparent;
-    color: #ccc;
-    font-size: 0.78rem;
+    color: #999;
+    font-size: 0.74rem;
     cursor: pointer;
     transition: all 0.15s;
     white-space: nowrap;
+    font-family: inherit;
   }
-  .filter-btn:hover { border-color: rgba(255,255,255,0.6); color: #fff; }
-  .filter-btn.active { background: #fff; color: #1a1814; border-color: #fff; }
+  .filter-btn:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
+  .filter-btn.active { background: #fff; color: #111; border-color: #fff; font-weight: 600; }
 
   /* Stats bar */
   .stats {
-    padding: 0.75rem 1.5rem;
-    font-size: 0.78rem;
+    padding: 0.6rem 1.25rem;
+    font-size: 0.72rem;
     color: var(--text-sub);
     border-bottom: 1px solid var(--border);
     background: var(--bg);
+    letter-spacing: 0.02em;
   }
 
-  /* Grid */
+  /* ── Grid ── */
   .grid {
-    padding: 1rem 1rem 4rem;
+    padding: 0.9rem 0.9rem 5rem;
     display: grid;
     grid-template-columns: 1fr;
-    gap: 0.75rem;
+    gap: 0.7rem;
   }
-  @media (min-width: 640px) {
-    .grid { grid-template-columns: 1fr 1fr; padding: 1.25rem 1.25rem 4rem; }
+  @media (min-width: 600px) {
+    .grid { grid-template-columns: 1fr 1fr; padding: 1rem 1rem 5rem; gap: 0.8rem; }
   }
-  @media (min-width: 1024px) {
-    .grid { grid-template-columns: 1fr 1fr 1fr; padding: 1.5rem 1.5rem 4rem; max-width: 1280px; margin: 0 auto; }
+  @media (min-width: 960px) {
+    .grid { grid-template-columns: 1fr 1fr 1fr; padding: 1.25rem 1.25rem 5rem; max-width: 1200px; margin: 0 auto; }
   }
 
-  /* Card */
+  /* ── Card ── */
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 10px;
-    padding: 1.1rem 1.1rem 1rem;
+    border-left: 4px solid var(--card-color, #ccc);
+    padding: 1rem 1rem 0.85rem 0.9rem;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    transition: box-shadow 0.15s, transform 0.15s;
+    gap: 0.55rem;
+    transition: box-shadow 0.18s, transform 0.18s;
+    position: relative;
   }
-  .card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); transform: translateY(-1px); }
+  @media (hover: hover) {
+    .card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.09); transform: translateY(-2px); }
+  }
 
+  /* Top row: badge + year */
   .card-top {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     gap: 0.5rem;
   }
   .media-badge {
-    font-size: 0.68rem;
+    font-size: 0.65rem;
     font-weight: 700;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.07em;
     text-transform: uppercase;
-    padding: 0.2rem 0.55rem;
+    padding: 0.18rem 0.55rem;
     border-radius: 4px;
     white-space: nowrap;
     flex-shrink: 0;
+    background: color-mix(in srgb, var(--card-color) 12%, white);
+    color: var(--card-color);
   }
-  .badge-ft { background: #fde8da; color: var(--tag-ft); }
-  .badge-pudding { background: #ede0f8; color: var(--tag-pudding); }
-  .badge-k { background: #d9f0e5; color: var(--tag-k); }
-  .badge-dw { background: #fde8da; color: var(--tag-dw); }
-  .badge-r { background: #d6edf5; color: var(--tag-r); }
-  .badge-bc { background: #d4edda; color: var(--tag-bc); }
-  .badge-nyt { background: #e8e8e8; color: var(--tag-nyt); }
-
-  .year {
-    font-size: 0.72rem;
-    color: var(--text-sub);
+  .year-badge {
+    font-size: 0.68rem;
+    font-weight: 700;
     font-variant-numeric: tabular-nums;
+    color: #fff;
+    background: var(--card-color);
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
     white-space: nowrap;
     flex-shrink: 0;
+    opacity: 0.85;
   }
 
+  /* Title */
   .card-title {
-    font-size: 0.88rem;
-    font-weight: 600;
-    line-height: 1.4;
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1.38;
     color: var(--text);
+    margin-top: 0.05rem;
   }
-  .card-title a {
-    color: inherit;
-    text-decoration: none;
-  }
-  .card-title a:hover { color: var(--accent); }
+  .card-title a { color: inherit; text-decoration: none; }
+  .card-title a:hover { color: var(--card-color); }
 
+  /* Question */
   .card-question {
-    font-size: 0.78rem;
+    font-size: 0.76rem;
     color: var(--text-sub);
-    line-height: 1.5;
+    line-height: 1.55;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
+  /* Method tags */
   .card-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 0.3rem;
-    margin-top: 0.25rem;
+    margin-top: 0.1rem;
   }
   .tag {
-    font-size: 0.68rem;
-    background: #f0ede8;
-    color: #6b6560;
+    font-size: 0.64rem;
+    font-weight: 500;
+    background: #f0ede6;
+    color: #6b6258;
     padding: 0.15rem 0.5rem;
     border-radius: 4px;
     white-space: nowrap;
   }
+  .tag-method { background: color-mix(in srgb, var(--card-color) 8%, #f5f4f0); color: var(--card-color); }
 
+  /* Divider */
+  .card-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0.1rem 0;
+  }
+
+  /* Expand button */
   .card-expand-btn {
-    font-size: 0.72rem;
-    color: var(--accent);
+    font-size: 0.7rem;
+    color: var(--text-sub);
     background: none;
     border: none;
     cursor: pointer;
     padding: 0;
     text-align: left;
-    margin-top: 0.1rem;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    transition: color 0.15s;
   }
-  .card-expand-btn:hover { text-decoration: underline; }
+  .card-expand-btn:hover { color: var(--card-color); }
+  .card-expand-btn svg { transition: transform 0.2s; }
+  .card-expand-btn.open svg { transform: rotate(180deg); }
 
+  /* Expand detail */
   .card-detail {
     display: none;
-    font-size: 0.76rem;
+    font-size: 0.74rem;
     color: var(--text-sub);
-    line-height: 1.55;
-    border-top: 1px solid var(--border);
-    padding-top: 0.65rem;
-    margin-top: 0.1rem;
+    line-height: 1.6;
+    padding-top: 0.5rem;
   }
   .card-detail.open { display: block; }
-  .card-detail strong {
-    display: block;
-    color: var(--text);
-    font-size: 0.7rem;
+  .card-detail section { margin-bottom: 0.6rem; }
+  .card-detail section:last-child { margin-bottom: 0; }
+  .detail-label {
+    display: inline-block;
+    font-size: 0.62rem;
     font-weight: 700;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    margin-top: 0.5rem;
-    margin-bottom: 0.15rem;
+    color: var(--card-color);
+    background: color-mix(in srgb, var(--card-color) 10%, white);
+    padding: 0.1rem 0.45rem;
+    border-radius: 3px;
+    margin-bottom: 0.25rem;
   }
-  .card-detail strong:first-child { margin-top: 0; }
+  .detail-text { color: var(--text-sub); }
+
+  /* Impact box */
+  .detail-impact {
+    background: color-mix(in srgb, var(--card-color) 6%, #f5f4f0);
+    border-left: 2px solid var(--card-color);
+    padding: 0.4rem 0.6rem;
+    border-radius: 0 4px 4px 0;
+    font-size: 0.73rem;
+    color: var(--text);
+    line-height: 1.5;
+  }
 
   .no-results {
     grid-column: 1 / -1;
@@ -207,8 +251,10 @@
 <body>
 
 <header>
-  <h1>資料視覺化案例庫</h1>
-  <p id="subtitle">7 家媒體・66 個專案・2013–2026</p>
+  <div class="header-top">
+    <h1>資料視覺化案例庫</h1>
+    <p id="subtitle">7 家媒體・66 個專案・2013–2026</p>
+  </div>
   <div class="filter-bar">
     <button class="filter-btn active" data-filter="all">全部</button>
     <button class="filter-btn" data-filter="Financial Times">Financial Times</button>
@@ -759,18 +805,34 @@ const cases = [
   }
 ];
 
-// Sort by year descending
 cases.sort((a, b) => b.year - a.year);
 
-const badgeClass = {
-  'Financial Times': 'badge-ft',
-  'The Pudding': 'badge-pudding',
-  'Kontinentalist': 'badge-k',
-  'Datawrapper': 'badge-dw',
-  '報導者': 'badge-r',
-  'Bellingcat': 'badge-bc',
-  'NYT Visual Investigations': 'badge-nyt'
+const mediaColor = {
+  'Financial Times': '#b84b00',
+  'The Pudding':     '#7b3fb5',
+  'Kontinentalist':  '#1a7a4a',
+  'Datawrapper':     '#c4491c',
+  '報導者':           '#0a6b8a',
+  'Bellingcat':      '#1a5c2e',
+  'NYT Visual Investigations': '#222222'
 };
+
+function methodTags(methods, tools) {
+  const m = (methods + ' ' + tools).toLowerCase();
+  const tags = [];
+  if (m.includes('衛星')) tags.push('衛星影像');
+  else if (m.includes('satellite')) tags.push('Satellite');
+  if (m.includes('osint') || m.includes('開源情報')) tags.push('OSINT');
+  if (m.includes('scrollytelling') || m.includes('捲動')) tags.push('Scrollytelling');
+  if (m.includes('地圖') || m.includes('gis') || m.includes('map')) tags.push('地圖');
+  if (m.includes('遊戲') || m.includes('game')) tags.push('新聞遊戲');
+  if (m.includes('3d') || m.includes('立體')) tags.push('3D 重建');
+  if (m.includes('音頻') || m.includes('audio')) tags.push('聲音');
+  if (tags.length === 0) tags.push(methods.split('、')[0].slice(0, 12));
+  return tags.slice(0, 2);
+}
+
+const chevronSVG = `<svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="2,4 6,8 10,4"/></svg>`;
 
 function renderCards(filter) {
   const grid = document.getElementById('grid');
@@ -785,34 +847,49 @@ function renderCards(filter) {
 
   stats.textContent = `顯示 ${filtered.length} 個專案，依年份由新到舊排列`;
 
-  grid.innerHTML = filtered.map((c, i) => `
-    <div class="card">
+  grid.innerHTML = filtered.map(c => {
+    const color = mediaColor[c.media] || '#888';
+    const tags = methodTags(c.methods, c.tools);
+    const mediaShort = c.media === 'NYT Visual Investigations' ? 'NYT Visual' : c.media;
+    return `
+    <div class="card" style="--card-color:${color}">
       <div class="card-top">
-        <span class="media-badge ${badgeClass[c.media]}">${c.media}</span>
-        <span class="year">${c.year}</span>
+        <span class="media-badge">${mediaShort}</span>
+        <span class="year-badge">${c.year}</span>
       </div>
       <div class="card-title">
         <a href="${c.url}" target="_blank" rel="noopener">${c.title}</a>
       </div>
       <div class="card-question">${c.question}</div>
       <div class="card-tags">
-        ${c.methods.split('、')[0] ? `<span class="tag">${c.methods.split('、')[0]}</span>` : ''}
-        ${c.tools.split('、')[0] ? `<span class="tag">${c.tools.split('、')[0]}</span>` : ''}
+        ${tags.map(t => `<span class="tag tag-method">${t}</span>`).join('')}
       </div>
-      <button class="card-expand-btn" onclick="toggleDetail(this)">展開詳情 ↓</button>
+      <div class="card-divider"></div>
+      <button class="card-expand-btn" onclick="toggleDetail(this)">
+        ${chevronSVG} 詳細分析
+      </button>
       <div class="card-detail">
-        <strong>呈現手法</strong>${c.methods}
-        <strong>數位工具</strong>${c.tools}
-        <strong>溝通成效</strong>${c.impact}
+        <section>
+          <div class="detail-label">呈現手法</div>
+          <div class="detail-text">${c.methods}</div>
+        </section>
+        <section>
+          <div class="detail-label">數位工具</div>
+          <div class="detail-text">${c.tools}</div>
+        </section>
+        <section>
+          <div class="detail-label">溝通成效</div>
+          <div class="detail-impact">${c.impact}</div>
+        </section>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 function toggleDetail(btn) {
   const detail = btn.nextElementSibling;
   const isOpen = detail.classList.toggle('open');
-  btn.textContent = isOpen ? '收起 ↑' : '展開詳情 ↓';
+  btn.classList.toggle('open', isOpen);
 }
 
 document.querySelectorAll('.filter-btn').forEach(btn => {
