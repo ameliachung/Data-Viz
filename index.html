@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>資料視覺化案例庫</title>
+<title>資料視覺化案例庫｜地理監測・OSINT・數位敘事</title>
 <style>
   :root {
     --bg: #f8f7f4;
@@ -117,6 +117,8 @@
   .badge-k { background: #d9f0e5; color: var(--tag-k); }
   .badge-dw { background: #fde8da; color: var(--tag-dw); }
   .badge-r { background: #d6edf5; color: var(--tag-r); }
+  .badge-bc { background: #d4edda; color: var(--tag-bc); }
+  .badge-nyt { background: #e8e8e8; color: var(--tag-nyt); }
 
   .year {
     font-size: 0.72rem;
@@ -206,7 +208,7 @@
 
 <header>
   <h1>資料視覺化案例庫</h1>
-  <p id="subtitle">5 家媒體・50 個專案・2014–2026</p>
+  <p id="subtitle">7 家媒體・66 個專案・2013–2026</p>
   <div class="filter-bar">
     <button class="filter-btn active" data-filter="all">全部</button>
     <button class="filter-btn" data-filter="Financial Times">Financial Times</button>
@@ -214,6 +216,8 @@
     <button class="filter-btn" data-filter="Kontinentalist">Kontinentalist</button>
     <button class="filter-btn" data-filter="Datawrapper">Datawrapper</button>
     <button class="filter-btn" data-filter="報導者">報導者</button>
+    <button class="filter-btn" data-filter="Bellingcat">Bellingcat</button>
+    <button class="filter-btn" data-filter="NYT Visual Investigations">NYT Visual</button>
   </div>
 </header>
 
@@ -615,6 +619,136 @@ const cases = [
     tools: "R語言（ggplot2）用於原型製作、D3.js用於正式互動圖表、自動化資料擷取與清洗管道",
     impact: "成為FT有史以來瀏覽量最高的單一頁面；每日收到逾千封讀者反饋；伯恩-默多克獲英國皇家統計學會榮譽會員殊榮"
   },
+  // Bellingcat
+  {
+    media: "Bellingcat", year: 2013, title: "敘利亞東古塔化武攻擊取證：火箭彈軌跡指向政府軍",
+    url: "https://www.bellingcat.com/news/mena/2015/08/20/8_21chemicaltrail/",
+    question: "2013年8月21日的東古塔沙林攻擊究竟從哪裡發射？開源證據能否在聯合國報告以外獨立指向攻擊來源？",
+    methods: "火箭彈殘骸落點地理定位、反向彈道軌跡計算地圖、多發彈著點交叉分析、衛星影像套疊政府軍控制區",
+    tools: "Google Earth火箭落點定位、三角測量彈道計算、衛星影像分析、聯合國Mission報告交叉比對",
+    impact: "彈道分析指向敘利亞政府軍控制區，為UN調查以外最具說服力的獨立開源佐證；建立化武攻擊OSINT核實方法論"
+  },
+  {
+    media: "Bellingcat", year: 2014, title: "MH17：Buk飛彈從俄羅斯到烏克蘭的開源追蹤",
+    url: "https://www.bellingcat.com/news/uk-and-europe/2015/10/08/mh17-the-open-source-evidence/",
+    question: "是誰擊落了馬來西亞航空MH17？俄羅斯是否與這枚造成298人罹難的Buk飛彈有直接關聯？",
+    methods: "社群媒體圖片眾包地理定位（Google Street View逐一比對背景特徵）、飛彈運輸路線互動地圖、俄方衛星影像竄改分析",
+    tools: "Google Street View、Google Earth、Yandex Maps、衛星影像比對、影像元數據分析、眾包協作平台",
+    impact: "2019年確認Buk來自俄羅斯第53防空飛彈旅；OSINT應用於國際法律調查的開創性案例；JIT調查大量引用Bellingcat開源證據"
+  },
+  {
+    media: "Bellingcat", year: 2017, title: "敘利亞 Khan Shaykhun 化武攻擊：飛行路線與彈頭物證連結",
+    url: "https://www.bellingcat.com/news/mena/2017/04/19/evidence-ghouta-khan-sheikhoun-sarin-attacks-involve-same-toxic-munitions/",
+    question: "敘利亞汗謝洪的沙林攻擊（約80人死亡）是否由敘利亞政府軍蘇-22戰機投彈？攻擊彈頭與先前化武攻擊是否有物證連結？",
+    methods: "彈頭殘骸地理定位與型號分析、敘利亞政府軍蘇-22航跡追蹤（飛行雷達數據）、衛星影像比對彈坑位置",
+    tools: "Flightradar24飛行數據、衛星影像、影片地理定位、化武彈頭資料庫比對",
+    impact: "與OPCW（禁化武組織）調查結論一致；成為化武攻擊OSINT調查的方法論基礎，被後續多個調查引用"
+  },
+  {
+    media: "Bellingcat", year: 2018, title: "Skripal毒殺案：揭露GRU特工真實身份",
+    url: "https://www.bellingcat.com/news/uk-and-europe/2018/09/26/skripal-suspect-boshirov-identified-gru-colonel-anatoliy-chepiga/",
+    question: "在俄羅斯否認且嫌疑人使用假身份的情況下，能否透過開放資料確認英國索爾茲伯里諾維喬克毒殺案的GRU主謀？",
+    methods: "護照號碼序列分析（俄羅斯資料庫洩漏）、護照核發時間與地點交叉比對、航班與酒店住宿紀錄追蹤、人臉辨識輔助核實",
+    tools: "俄羅斯公開企業法人登記資料、護照資料庫、航班追蹤工具、CCTV截圖分析",
+    impact: "識別「博希羅夫」為GRU上校阿納托利·切皮加；護照序列分析OSINT技術的標誌性示範，被廣泛複製應用"
+  },
+  {
+    media: "Bellingcat", year: 2019, title: "新疆大規模拘押設施衛星追蹤",
+    url: "https://www.bellingcat.com/news/2019/09/05/frontier-closed-understanding-xinjiang-through-satellite-imagery/",
+    question: "中國聲稱的「職業技能教育培訓中心」實際規模與安全等級為何？衛星影像能否系統性記錄設施建設、擴張與升級過程？",
+    methods: "Planet Labs高解析衛星影像時序比對、設施特徵分類（圍牆高度、瞭望塔、電網）、多地區設施擴張分布地圖",
+    tools: "Planet Labs、Google Earth、Sentinel-2開源衛星影像、GIS地理空間分析",
+    impact: "與澳大利亞ASPI「新疆資料計畫」形成互補，共同建立系統性開源記錄；多國政府引用為制裁決策依據"
+  },
+  {
+    media: "Bellingcat", year: 2020, title: "Navalny毒殺調查：追蹤FSB化武小組並直接採訪特工",
+    url: "https://www.bellingcat.com/news/2020/12/14/fsb-team-of-chemical-weapon-experts-implicated-in-navalny-novichok-poisoning/",
+    question: "誰在何時對俄羅斯反對派領袖納瓦爾尼投毒？FSB跟蹤行動持續多久、規模多大？",
+    methods: "電話通聯紀錄時間軸分析、行程路線地圖重建、航班資料與酒店住宿交叉比對、FSB特工組織結構關係圖",
+    tools: "俄羅斯航班資料、手機通話記錄、社群媒體個人資料比對、開源人員資料庫",
+    impact: "識別8名FSB跟蹤特工，並直接電話採訪其中一名讓其確認行動細節；OSINT調查中最戲劇化的直接對質案例"
+  },
+  {
+    media: "Bellingcat", year: 2022, title: "俄羅斯入侵前軍事集結：開源社群搶先官方情報追蹤",
+    url: "https://www.bellingcat.com/news/2022/02/23/russia-is-invading-ukraine-here-is-the-open-source-evidence/",
+    question: "在俄羅斯官方否認軍事入侵計畫的情況下，開源社群能否比官方情報機構更早、更透明地確認大規模軍事集結？",
+    methods: "社群媒體影片中軍事車輛即時地理定位、鐵路運輸衛星影像監測、軍事設備型號辨識與分佈熱力圖",
+    tools: "Twitter/TikTok/VK影片地理定位、Google Earth比對、Planet Labs衛星影像、開源軍事設備資料庫",
+    impact: "與The Insider、CNN合作，開戰前數月即公布集結規模；示範公民OSINT社群補充甚至超越官方情報透明度的可能性"
+  },
+  {
+    media: "Bellingcat", year: 2022, title: "Bucha大屠殺取證：衛星影像推翻俄方「偽造」說法",
+    url: "https://www.bellingcat.com/news/2022/04/21/documenting-bucha-through-open-source-research/",
+    question: "布查街道上的平民遺體是否如俄方所稱由烏克蘭偽造？衛星影像能否確立遺體出現時間與俄軍佔領的精確關係？",
+    methods: "Maxar商業衛星影像時間軸比對（確認遺體在俄軍撤離前已存在）、社群媒體影片地理定位、Russia-Ukraine Monitor Map（逾11,600張地理定位事件記錄）",
+    tools: "Maxar Technologies衛星影像、Planet Labs、Google Earth、影片地理定位工具、時間戳元數據分析",
+    impact: "衛星影像直接反駁俄方說法，成為國際刑事法院調查的關鍵開源證據；Monitor Map成為烏克蘭戰爭最完整的開源事件資料庫"
+  },
+  // NYT Visual Investigations
+  {
+    media: "NYT Visual Investigations", year: 2017, title: "敘利亞 Khan Shaykhun 化武攻擊法醫重建",
+    url: "https://www.nytimes.com/interactive/2017/06/30/world/middleeast/syria-chemical-attack-sarin.html",
+    question: "敘利亞政府軍是否在Khan Shaykhun投下沙林炸彈？影片、衛星影像與氣象數據能否重建攻擊的精確過程？",
+    methods: "3D彈坑重建、沙林氣體擴散模型視覺化（結合風向風速氣象資料）、敘利亞政府軍蘇-22飛行路線地圖、影片地理定位時間軸",
+    tools: "Flightradar24、衛星影像、氣象數據模型、3D建模軟體、影片元數據分析",
+    impact: "NYT Visual Investigations早期最具影響力的案例；OPCW調查結論與NYT分析高度吻合；獲Emmy新聞紀錄片獎"
+  },
+  {
+    media: "NYT Visual Investigations", year: 2018, title: "卡舒吉暗殺重建：追蹤15人沙國殺手小組",
+    url: "https://www.nytimes.com/interactive/2018/10/15/world/middleeast/saudi-arabia-khashoggi-operation.html",
+    question: "沙烏地阿拉伯如何在伊斯坦堡領事館策畫暗殺記者賈邁勒·卡舒吉？15人殺手小組的行動軌跡能否從公開資料中完整重建？",
+    methods: "飛行紀錄追蹤（私人飛機進出伊斯坦堡時間軸）、酒店住宿資料交叉比對、監控影像截圖分析、人員組成關係圖",
+    tools: "飛行追蹤資料庫、土耳其官方監控影像、護照資料核實、社群媒體個人資料比對",
+    impact: "獲皮博迪獎（Peabody Award）；成為公開資料追蹤國家主導暗殺行動的最完整案例；促使美國參議院通過制裁決議"
+  },
+  {
+    media: "NYT Visual Investigations", year: 2019, title: "新疆拘押設施衛星調查：識別「培訓中心」真實安全等級",
+    url: "https://www.nytimes.com/interactive/2019/11/16/world/asia/china-detention-map.html",
+    question: "中國在新疆建造的「職業培訓中心」實際規模與安全等級為何？衛星影像是否揭示其監獄性質？",
+    methods: "Planet Labs高解析衛星影像分析（識別電網、瞭望塔、圍牆）、設施分布互動地圖、時間軸呈現設施快速擴張",
+    tools: "Planet Labs商業衛星、Google Earth Engine、GIS地理空間分析、建築特徵機器學習辨識",
+    impact: "配合「新疆文件」洩漏事件同步發布；成為多國政府援引的制裁佐證；與Bellingcat、ASPI形成互補的國際調查矩陣"
+  },
+  {
+    media: "NYT Visual Investigations", year: 2019, title: "沙烏地石油設施無人機攻擊：衛星影像確認攻擊方位",
+    url: "https://www.nytimes.com/interactive/2019/09/16/world/middleeast/saudi-arabia-oil-refinery-drone.html",
+    question: "攻擊阿布蓋格石油設施的無人機從哪個方向來？伊朗是否為幕後主使？衛星影像能否指出精確打擊點與攻擊方位？",
+    methods: "攻擊前後高解析衛星影像對比（標注每個彈坑位置）、攻擊角度三角測量、無人機飛行方位幾何分析",
+    tools: "Planet Labs衛星影像、幾何分析工具、衛星影像陰影測量（判斷拍攝時間）",
+    impact: "美國官員隨後以NYT分析為基礎公布衛星影像；成為無人機攻擊法醫分析的標竿案例"
+  },
+  {
+    media: "NYT Visual Investigations", year: 2020, title: "警察暴力影片核實：72小時地理定位全美抗議現場",
+    url: "https://www.nytimes.com/interactive/2020/06/01/us/george-floyd-protest-police-videos.html",
+    question: "在George Floyd抗議浪潮中，大量聲稱記錄警察暴力的影片是否屬實？如何在極短時間內批量核實分散全美的數百段影片？",
+    methods: "影片地理定位批量核實流程、警察暴力事件互動地圖、已核實案例時間軸、分類標注視覺化（警棍/胡椒噴霧/橡皮子彈）",
+    tools: "Google Street View地理定位、影片元數據分析、眾包核實系統、地理空間資料庫",
+    impact: "示範如何對突發社會事件進行即時OSINT核實；建立可信的警察暴力事件資料庫，被多個媒體引用為即時核實方法論範例"
+  },
+  {
+    media: "NYT Visual Investigations", year: 2021, title: "1月6日國會暴動3D重建：逾千段影片整合時間軸",
+    url: "https://www.nytimes.com/interactive/2021/01/12/us/capitol-mob-timeline.html",
+    question: "2021年1月6日美國國會暴動如何在6小時內從集會演變為佔領？每個關鍵節點的事件序列如何從海量公民影片中重建？",
+    methods: "整合逾1,000段公民拍攝影片的精確時間軸、國會建築3D模型（標注各群體移動路線）、地理定位熱力圖、Scrollytelling分時段導覽",
+    tools: "3D建築模型、影片地理定位、時間戳同步工具、Parler/Twitter/Facebook影片眾包蒐集",
+    impact: "成為國會聽證會的重要視覺佐證；獲Emmy新聞獎；確立「公民影片眾包重建現場」的新聞方法論標準"
+  },
+  {
+    media: "NYT Visual Investigations", year: 2021, title: "喀布爾無人機誤殺調查：迫使五角大廈承認錯誤",
+    url: "https://www.nytimes.com/2021/09/10/world/asia/us-air-strike-drone-kabul-afghanistan.html",
+    question: "美軍在喀布爾機場恐攻後發動的無人機報復攻擊，真的擊中ISIS威脅目標？還是誤殺了10名平民（包括7名兒童）？",
+    methods: "監視器影片逐幀分析（重建目標車輛當日行程）、衛星地圖標注爆炸現場與周邊環境、爆炸力度物理分析、現場採訪時間軸整合",
+    tools: "監視器影片分析、Maxar衛星影像、爆炸現場地理測量、現場目擊者採訪",
+    impact: "美軍最初堅稱攻擊成功；NYT調查迫使五角大廈承認誤殺10名平民；獲2022年Pulitzer Prize公共利益獎"
+  },
+  {
+    media: "NYT Visual Investigations", year: 2022, title: "Bucha大屠殺法醫時間軸：衛星影像釘死俄軍責任",
+    url: "https://www.nytimes.com/2022/04/04/world/europe/bucha-ukraine-bodies.html",
+    question: "布查的平民屍體是否在俄軍佔領期間就已存在？衛星影像時間戳能否推翻俄方「烏克蘭偽造」的說法？",
+    methods: "Maxar衛星影像精確日期標注（比對特定地點遺體出現時間節點與俄軍部署地圖）、地面影像地理定位驗證",
+    tools: "Maxar Technologies高解析衛星影像、時間戳分析、地理定位技術、俄羅斯軍事移動資料比對",
+    impact: "與Bellingcat共同構成布查事件的核心開源取證報告；衛星影像日期成為國際刑事法院調查的關鍵證據"
+  },
   {
     media: "The Pudding", year: 2014, title: "Rappers, Sorted by the Size of Their Vocabulary",
     url: "https://pudding.cool/projects/vocabulary/index.html",
@@ -633,7 +767,9 @@ const badgeClass = {
   'The Pudding': 'badge-pudding',
   'Kontinentalist': 'badge-k',
   'Datawrapper': 'badge-dw',
-  '報導者': 'badge-r'
+  '報導者': 'badge-r',
+  'Bellingcat': 'badge-bc',
+  'NYT Visual Investigations': 'badge-nyt'
 };
 
 function renderCards(filter) {
